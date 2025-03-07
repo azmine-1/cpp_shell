@@ -84,6 +84,47 @@ std::string expand_env_vars(const std::string& token) {
         return result;
     }
 
+Command parse_command(const std::vector<std::string>& tokens) {
+        Command cmd;
+        cmd.append_output = false;
+        
+        for (size_t i = 0; i < tokens.size(); i++) {
+            std::string expanded_token = expand_env_vars(tokens[i]);
+            
+            // Handle pipes
+            if (expanded_token == "|") {
+                if (i + 1 < tokens.size()) {
+                    std::vector<std::string> remainder(tokens.begin() + i + 1, tokens.end());
+                    cmd.pipe_commands.push_back(parse_command(remainder));
+                    break;
+                }
+            }
+            else if (expanded_token == "<") {
+                if (i + 1 < tokens.size()) {
+                    cmd.input_file = expand_env_vars(tokens[++i]);
+                }
+            }
+            else if (expanded_token == ">") {
+                if (i + 1 < tokens.size()) {
+                    cmd.output_file = expand_env_vars(tokens[++i]);
+                    cmd.append_output = false;
+                }
+            }
+            
+            else if (expanded_token == ">>") {
+                if (i + 1 < tokens.size()) {
+                    cmd.output_file = expand_env_vars(tokens[++i]);
+                    cmd.append_output = true;
+                }
+            }
+            else {
+                cmd.args.push_back(expanded_token);
+            }
+        }
+        
+        return cmd;
+    }
+
 int main() {
     Shell shell;
     shell.run();
