@@ -47,6 +47,14 @@ private:
         
         return tokens;
     }
+struct Command {
+        std::vector<std::string> args;
+        std::string input_file;
+        std::string output_file;
+        bool append_output;
+        std::vector<Command> pipe_commands;
+    };
+
 int main() {
     Shell shell;
     shell.run();
