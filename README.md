@@ -46,3 +46,4 @@ cat < file.txt
 # Piping
 ls | grep .txt
 ```
+![image](https://github.com/user-attachments/assets/4512e869-7009-4b5c-a10b-37c66b4a223e)
